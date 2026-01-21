@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <title id="pageTitle">Copy-Paste-O-Matic</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="Artur A.">
+
+	<script>
+	
+	  function copyText() {
+        // Get the text field
+        var copyText = document.getElementById("outputBox");
+
+        // Select the text field
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.value);
+
+        // Alert the copied text
+        //alert("Copied the text: " + copyText.value);
+        
+        //TODO: add confirmation message in text below button
+	  } 
+	
+	  function clearText() {
+	    document.getElementById("outputBox").value = "";
+	    
+	    //TODO: add confirmation before clearing text to prevent accidental deletion
+	  }
+	  
+	  function generateInputForm(configInfo) {
+	  
+		// configInfo will be an array
+	  
+	    //TODO: dynamically generates sections with buttons and custom copiable text per button
+	    
+	    //TODO: generates different content based on workflow selector
+	  
+	  }
+	  
+	  function addText(snippet) {
+	  
+	    // Get existing text field
+	    var existingText = document.getElementById("outputBox").value;
+	    
+	    // Append the snippet and output back to the text field
+	    document.getElementById("outputBox").value = existingText + snippet;
+	  
+	  }
+	
+	</script>
+
+	<style>
+		body {font-family: sans-serif}
+		h1, h2, h3, noscript, form {text-align: center}
+		.button, .inputButton {
+ 			 background-color: #555555;
+ 			 border: none;
+ 			 color: white;
+ 			 padding: 5px 10px;
+ 			 text-align: center;
+ 			 text-decoration: none;
+ 			 display: inline-block;
+ 			 border-radius: 4px;
+ 		}
+ 		.button:hover {
+ 			 background-color: #999999;
+ 		}
+ 		textarea {
+			width: 90%;
+			border: 2px solid black;
+			border-radius: 4px;
+		}
+		
+		div.inputArea {
+		    width:60%;  
+            float:left;
+		}
+		
+		/* Dropdown menu */
+		div.selector {
+			padding: 5px 10px;
+		}
+		
+		/* End dropdown menu */
+		
+		div.section {
+			width: 90%;
+			/*border: 1px solid black;*/
+			padding: 5px 10px;
+		}
+		
+		div.sectionTitle {
+			font-weight: bold;
+		}
+		
+		div.outputArea {
+		    width:40%;  
+            float:left;
+		}
+		
+		div.outputButtonArea {
+			text-align: center;
+			padding: 5px 10px;
+		}
+		
+		/* Tooltips */
+		.tooltip {
+		  position: relative;
+		  display: inline-block;
+		  /*border-bottom: 1px dotted black;*/
+		}
+
+		.tooltip .tooltiptext {
+		  visibility: hidden;
+		  width: 120px;
+		  background-color: #555;
+		  color: #fff;
+		  text-align: center;
+		  border-radius: 6px;
+		  padding: 5px 0;
+		  position: absolute;
+		  z-index: 1;
+		  bottom: -125%;
+		  left: 80%;
+		  margin-left: -60px;
+		  opacity: 0;
+		  transition: opacity 0.3s;
+		}
+
+		.tooltip .tooltiptext::after {
+		  content: "";
+		  position: absolute;
+		  top: 100%;
+		  left: 50%;
+		  /* items below add a little triangle */
+		  /*margin-left: -5px;
+		  border-width: 5px;
+		  border-style: solid;
+		  border-color: #555 transparent transparent transparent;*/
+		}
+
+		.tooltip:hover .tooltiptext {
+		  visibility: visible;
+		  opacity: 1;
+		}
+		
+		/* End tooltips */
+		
+	</style>
+
+  </head>
+
+  <body>
+    <h1>Copy-Paste-O-Matic (v0.1)</h2>
+   
+    <div class="inputArea">
+    
+       <div class="selector">
+        <select id="workflow" name="workflow">
+          <option value="workflow1">Workflow 1</option>
+          <option value="workflow2">Workflow 2</option>
+          <option value="workflow3">Workflow 3</option>
+          <option value="workflow4">Workflow 4</option>
+        </select>
+      </div>
+      
+      <div id="inputButtonArea">
+      
+        <div class="section" id="section1">
+          <div class="sectionTitle">Section 1</div>
+          <div class="tooltip"><input type=button class="inputButton" value="Text A" 
+				onClick="addText('- This is text A.\n')"/>
+				<span class="tooltiptext">This is text A.</span></div>
+		  <div class="tooltip"><input type=button class="inputButton" value="Text B" 
+				onClick="addText('- This is text B.\n')"/>
+				<span class="tooltiptext">This is text B.</span></div>
+	      <div class="tooltip"><input type=button class="inputButton" value="Text C" 
+				onClick="addText('- This is text C.\n')"/>
+				<span class="tooltiptext">This is text C.</span></div>
+          <div class="tooltip"><input type=button class="inputButton" value="Text D" 
+				onClick="addText('- This is text D.\n')"/>
+				<span class="tooltiptext">This is text D.</span></div>
+        </div>
+        
+        <div class="section" id="section2">
+          <div class="sectionTitle">Section 2</div>
+          <div class="tooltip"><input type=button class="inputButton" value="Text D" 
+				onClick="addText('- This is text D.\n')"/>
+				<span class="tooltiptext">This is text D.</span></div>
+		  <div class="tooltip"><input type=button class="inputButton" value="Text E" 
+				onClick="addText('- This is text E.\n')"/>
+				<span class="tooltiptext">This is text E.</span></div>
+	      <div class="tooltip"><input type=button class="inputButton" value="Text F" 
+				onClick="addText('- This is text F.\n')"/>
+				<span class="tooltiptext">This is text F.</span></div>
+          <div class="tooltip"><input type=button class="inputButton" value="Text G" 
+				onClick="addText('- This is text G.\n')"/>
+				<span class="tooltiptext">This is text G.</span></div>
+        </div>
+        
+        <div class="section" id="section3">
+          <div class="sectionTitle">Section 3</div>
+          <div class="tooltip"><input type=button class="inputButton" value="Text W" 
+				onClick="addText('- This is text W.\n')"/>
+				<span class="tooltiptext">This is text W.</span></div>
+		  <div class="tooltip"><input type=button class="inputButton" value="Text X" 
+				onClick="addText('- This is text X.\n')"/>
+				<span class="tooltiptext">This is text X.</span></div>
+	      <div class="tooltip"><input type=button class="inputButton" value="Text Y" 
+				onClick="addText('- This is text Y.\n')"/>
+				<span class="tooltiptext">This is text Y.</span></div>
+          <div class="tooltip"><input type=button class="inputButton" value="Text Z" 
+				onClick="addText('- This is text Z.\n')"/>
+				<span class="tooltiptext">This is text Z.</span></div>
+        </div>
+      
+      </div>
+          
+    </div>
+    
+    <div class="outputArea">
+    
+      <textarea rows="20" name="outputBox" id="outputBox"></textarea>
+      
+      <div class="outputButtonArea">
+        <input type=button class="button" value="COPY TEXT" 
+				onClick="copyText()"/>
+	    <input type=button class="button" value="Clear text box" 
+				onClick="clearText()"/>
+	  </div>
+	</div>
+
+  </body>
+</html>
