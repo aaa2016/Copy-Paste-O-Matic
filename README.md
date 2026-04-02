@@ -26,4 +26,4 @@ Any text that is manually inserted or edited in the text area will also be copie
 
 ## Screenshot<a name="screenshot"></a>
 
-![Screenshot of tool](https://github.com/aaa2016/Copy-Paste-O-Matic/blob/master/screenshot.png)
+![Screenshot of tool](https://github.com/aaa2016/Copy-Paste-O-Matic/blob/main/screenshot.png)
