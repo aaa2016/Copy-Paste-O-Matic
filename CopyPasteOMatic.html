@@ -6,55 +6,8 @@
     <meta name="description" content="">
     <meta name="keywords" content="">
     <meta name="author" content="Artur A.">
-
-	<script>
-	
-	  function copyText() {
-        // Get the text field
-        var copyText = document.getElementById("outputBox");
-
-        // Select the text field
-        copyText.select();
-        copyText.setSelectionRange(0, 99999); // For mobile devices
-
-        // Copy the text inside the text field
-        navigator.clipboard.writeText(copyText.value);
-
-        // Alert the copied text
-        //alert("Copied the text: " + copyText.value);
-        
-        //TODO: add confirmation message in text below button
-	  } 
-	
-	  function clearText() {
-	    document.getElementById("outputBox").value = "";
-	    
-	    //TODO: add confirmation before clearing text to prevent accidental deletion
-	  }
-	  
-	  function generateInputForm(configInfo) {
-	  
-		// configInfo will be an array
-	  
-	    //TODO: dynamically generates sections with buttons and custom copiable text per button
-	    
-	    //TODO: generates different content based on workflow selector
-	  
-	  }
-	  
-	  function addText(snippet) {
-	  
-	    // Get existing text field
-	    var existingText = document.getElementById("outputBox").value;
-	    
-	    // Append the snippet and output back to the text field
-	    document.getElementById("outputBox").value = existingText + snippet;
-	  
-	  }
-	
-	</script>
-
-	<style>
+    
+    <style>
 		body {font-family: sans-serif}
 		h1, h2, h3, noscript, form {text-align: center}
 		.button, .inputButton {
@@ -108,6 +61,20 @@
 			padding: 5px 10px;
 		}
 		
+		div.messages {
+			width: 90%;
+			color: red;
+			text-align: center;
+ 			text-decoration: none;
+ 			display: inline-block;
+ 			opacity: 1;
+		}
+		
+		.fade-out {
+  			opacity: 0;
+  			transition: opacity 2s ease;
+		}
+
 		/* Tooltips */
 		.tooltip {
 		  position: relative;
@@ -153,13 +120,157 @@
 		
 	</style>
 
+	<script>
+	
+	// Check for presence of external config file
+	const script = document.createElement("script");
+		script.src = "config.js";
+
+		// If loads successfully, generate the input form
+		script.onload = () => {
+		  console.log("Script loaded successfully");
+		  generateInputForm()
+		};
+
+		// If fails to load, display error
+		script.onerror = () => {
+		  console.error("Script failed to load");
+		  const errorMessage = document.createElement("div");
+	  	  errorMessage.innerHTML = "The configuration file (config.js) is missing!";
+	  	  errorMessage.style.color = "#555555";
+          document.getElementById("inputButtonArea").appendChild(errorMessage);
+		};
+
+		document.head.appendChild(script);
+
+	  /*function fileLoadError() {
+		
+		console.error("Failed to load config.js");
+        alert("Error: Required script failed to load.");
+        
+        const errorMessage = document.createElement("div");
+	  	errorMessage.innerHTML = "The configuration file (config.js) is missing";
+        document.getElementById("inputButtonArea").appendChild(errorMessage);
+		
+	  }*/
+		
+		 
+	  function generateInputForm() {
+	  
+	  	// configInfo will be an array stored in external config.js file
+		
+		console.log("Config is: " + configInfo);
+		console.log("Brand colour is: " + brandColor);
+		console.log("Brand text colour is: " + brandTextColor);
+		
+	  	// Creates a section for each 1st order element in the config array
+	  	for (let i=0; i<configInfo.length; i++) {
+	  	
+	  		const sectn = document.createElement("div");
+	  		sectn.innerHTML = configInfo[i][0]; // 1st order element 1 is section name
+	  		sectn.classList.add("sectionTitle");
+	  		sectn.style.margin = '5px';
+	  		document.getElementById("inputButtonArea").appendChild(sectn);
+	  	
+	  		// Creates a button for each 2nd order element in the config array
+	  		for (let j=1; j<configInfo[i].length; j++) {
+	  		
+	  			const btnContainer = document.createElement("div");
+	  			btnContainer.classList.add("tooltip");
+	  			
+	  			const btnTooltip = document.createElement("span");
+	  			btnTooltip.classList.add("tooltipText");
+	  			btnTooltip.innerHTML = configInfo[i][j][1];
+	  			btnTooltip.style.visibility = "hidden";
+	  			btnTooltip.style.position = "absolute";
+	  			
+	  			// TODO: fix tooltips not appearing correctly
+	  			
+	    		const btn = document.createElement("button");
+				btn.innerHTML = configInfo[i][j][0]; // 3rd order element 1 is button text
+				btn.classList.add("inputButton");
+				btn.onclick = function() {
+   					addText(configInfo[i][j][1]); //3rd order element 2 is text to copy
+				};
+				btn.style.backgroundColor = brandColor;
+				btn.style.color = brandTextColor;
+				btn.style.border = "none";
+				btn.style.padding = "5px";
+				btn.style.borderRadius = "4px";
+				btn.style.margin = "5px";
+ 			    btn.style.display = "inline-block";
+				
+				btnContainer.appendChild(btn);
+				btnContainer.appendChild(btnTooltip);
+				
+				document.getElementById("inputButtonArea").appendChild(btnContainer);
+				
+			}
+		
+		}
+	  	    
+	    //TODO: generates different content based on drop-down workflow selector
+	  
+	  }
+	  
+	  function addText(snippet) {
+	  
+	    // Get existing text field
+	    var existingText = document.getElementById("outputBox").value;
+	    
+	    // Append the snippet and output back to the text field
+	    document.getElementById("outputBox").value = existingText + snippet;
+	  
+	  }
+	
+	  function copyText() {
+        // Get the text field
+        var copyText = document.getElementById("outputBox");
+
+        // Select the text field
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.value);
+
+        // Alert the copied text
+        //alert("Copied the text: " + copyText.value);
+        
+        // Display confirmation message below button, that fades
+        // Delete existing messages first
+        const list = document.getElementById("messageArea");
+		while (list.hasChildNodes()) {
+		  list.removeChild(list.firstChild);
+		}
+		// Now create new message
+        const successMessage = document.createElement("div");
+	  	successMessage.innerHTML = "Text copied!";
+	  	successMessage.style.color = brandColor;
+        document.getElementById("messageArea").appendChild(successMessage);
+        setTimeout(() => {
+  			successMessage.classList.add("fade-out");
+		}, 10);
+        
+	  } 
+	
+	  function clearText() {
+	    document.getElementById("outputBox").value = "";
+	    document.getElementById("messageArea").innerHTML = "";
+	    
+	    //TODO: add confirmation before clearing text to prevent accidental deletion
+	  }
+	
+	</script>
+
   </head>
 
   <body>
-    <h1>Copy-Paste-O-Matic (v0.1)</h2>
+    <h1>Copy-Paste-O-Matic (v0.2)</h2>
    
     <div class="inputArea">
     
+       <!-- TODO: add workflow selector
        <div class="selector">
         <select id="workflow" name="workflow">
           <option value="workflow1">Workflow 1</option>
@@ -167,57 +278,15 @@
           <option value="workflow3">Workflow 3</option>
           <option value="workflow4">Workflow 4</option>
         </select>
-      </div>
+      </div>-->
       
       <div id="inputButtonArea">
-      
-        <div class="section" id="section1">
-          <div class="sectionTitle">Section 1</div>
-          <div class="tooltip"><input type=button class="inputButton" value="Text A" 
-				onClick="addText('- This is text A.\n')"/>
-				<span class="tooltiptext">This is text A.</span></div>
-		  <div class="tooltip"><input type=button class="inputButton" value="Text B" 
-				onClick="addText('- This is text B.\n')"/>
-				<span class="tooltiptext">This is text B.</span></div>
-	      <div class="tooltip"><input type=button class="inputButton" value="Text C" 
-				onClick="addText('- This is text C.\n')"/>
-				<span class="tooltiptext">This is text C.</span></div>
-          <div class="tooltip"><input type=button class="inputButton" value="Text D" 
-				onClick="addText('- This is text D.\n')"/>
-				<span class="tooltiptext">This is text D.</span></div>
-        </div>
-        
-        <div class="section" id="section2">
-          <div class="sectionTitle">Section 2</div>
-          <div class="tooltip"><input type=button class="inputButton" value="Text D" 
-				onClick="addText('- This is text D.\n')"/>
-				<span class="tooltiptext">This is text D.</span></div>
-		  <div class="tooltip"><input type=button class="inputButton" value="Text E" 
-				onClick="addText('- This is text E.\n')"/>
-				<span class="tooltiptext">This is text E.</span></div>
-	      <div class="tooltip"><input type=button class="inputButton" value="Text F" 
-				onClick="addText('- This is text F.\n')"/>
-				<span class="tooltiptext">This is text F.</span></div>
-          <div class="tooltip"><input type=button class="inputButton" value="Text G" 
-				onClick="addText('- This is text G.\n')"/>
-				<span class="tooltiptext">This is text G.</span></div>
-        </div>
-        
-        <div class="section" id="section3">
-          <div class="sectionTitle">Section 3</div>
-          <div class="tooltip"><input type=button class="inputButton" value="Text W" 
-				onClick="addText('- This is text W.\n')"/>
-				<span class="tooltiptext">This is text W.</span></div>
-		  <div class="tooltip"><input type=button class="inputButton" value="Text X" 
-				onClick="addText('- This is text X.\n')"/>
-				<span class="tooltiptext">This is text X.</span></div>
-	      <div class="tooltip"><input type=button class="inputButton" value="Text Y" 
-				onClick="addText('- This is text Y.\n')"/>
-				<span class="tooltiptext">This is text Y.</span></div>
-          <div class="tooltip"><input type=button class="inputButton" value="Text Z" 
-				onClick="addText('- This is text Z.\n')"/>
-				<span class="tooltiptext">This is text Z.</span></div>
-        </div>
+      <!-- Button for testing tooltip
+      <div class="tooltip"><input type=button class="inputButton" value="Tooltip test" 
+				onClick="addText('- This tooltip works.\n')"/>
+				<span class="tooltiptext">This tooltip works.</span></div>
+				
+	  -->
       
       </div>
           
@@ -232,6 +301,9 @@
 				onClick="copyText()"/>
 	    <input type=button class="button" value="Clear text box" 
 				onClick="clearText()"/>
+	  </div>
+	  <div class="messages" id="messageArea">
+	  	<!--Messages output here-->
 	  </div>
 	</div>
 
