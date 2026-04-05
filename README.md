@@ -19,6 +19,8 @@ Each snippet of text can be copied as many times as needed.
 
 Any text that is manually inserted or edited in the text area will also be copied to the clipboard.
 
+The user can select the option of a single or double carriage return (new line) between copied snippets of text.
+
 ## Features yet to be implemented<a name="features"></a>
 
 * Tooltips that display the text to be copied when a button is hovered over

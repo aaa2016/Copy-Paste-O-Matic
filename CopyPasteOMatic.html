@@ -3,7 +3,7 @@
   <head>
     <title id="pageTitle">Copy-Paste-O-Matic</title>
     <meta charset="UTF-8">
-    <meta name="description" content="">
+    <meta name="description" content="Tool for quicker copy-pasting of text snippets">
     <meta name="keywords" content="">
     <meta name="author" content="Artur A.">
     
@@ -39,6 +39,10 @@
 			padding: 5px 10px;
 		}
 		
+		div.selectorContainer {
+			display: inline-block;
+		}
+		
 		/* End dropdown menu */
 		
 		div.section {
@@ -52,8 +56,10 @@
 		}
 		
 		div.outputArea {
-		    width:40%;  
-            float:left;
+		    width: 40%;  
+            /*float:left;*/
+            position: fixed; /* Makes box stay in place as user scrolls down */
+            right: 0; /* Keeps box aligned at the right of the page */
 		}
 		
 		div.outputButtonArea {
@@ -84,17 +90,20 @@
 
 		.tooltip .tooltiptext {
 		  visibility: hidden;
-		  width: 120px;
+		  width: 120px; /* TODO: dynamic tooltip width */
 		  background-color: #555;
 		  color: #fff;
-		  text-align: center;
+		  /* text-align: center; */
 		  border-radius: 6px;
-		  padding: 5px 0;
-		  position: absolute;
+		  padding: 5px;
+		  position:  absolute;
 		  z-index: 1;
-		  bottom: -125%;
-		  left: 80%;
-		  margin-left: -60px;
+		  top: 100%;
+		  left: 50%;
+		  /*
+		  bottom: -100%;
+		  left: 100%;
+		  margin-left: -50px;*/
 		  opacity: 0;
 		  transition: opacity 0.3s;
 		}
@@ -104,7 +113,7 @@
 		  position: absolute;
 		  top: 100%;
 		  left: 50%;
-		  /* items below add a little triangle */
+		  /* the bits below add a little triangle */
 		  /*margin-left: -5px;
 		  border-width: 5px;
 		  border-style: solid;
@@ -141,19 +150,7 @@
           document.getElementById("inputButtonArea").appendChild(errorMessage);
 		};
 
-		document.head.appendChild(script);
-
-	  /*function fileLoadError() {
-		
-		console.error("Failed to load config.js");
-        alert("Error: Required script failed to load.");
-        
-        const errorMessage = document.createElement("div");
-	  	errorMessage.innerHTML = "The configuration file (config.js) is missing";
-        document.getElementById("inputButtonArea").appendChild(errorMessage);
-		
-	  }*/
-		
+	  document.head.appendChild(script);
 		 
 	  function generateInputForm() {
 	  
@@ -161,49 +158,94 @@
 		
 		console.log("Config is: " + configInfo);
 		console.log("Brand colour is: " + brandColor);
-		console.log("Brand text colour is: " + brandTextColor);
+		console.log("Brand contrast colour is: " + brandContrastColor);
+		
+		// Create line spacing radio selector
+		document.getElementById("inputButtonArea").innerHTML = "Default line spacing: ";
+		
+		// Create choices for spacing selector - used later in function addText(snippet)
+		var options = ['single', 'double'];
+		
+        const selectorContainer = document.createElement("span");
+         
+        options.forEach(function(option, index) {
+            // Create radio input
+            var radioButton = document.createElement('input');
+            radioButton.type = 'radio';
+            radioButton.name = 'spacingSelection';
+            radioButton.value = option;
+            radioButton.id = option + "Selected";
+            
+            // Create label
+            var label = document.createElement('label');
+            label.htmlFor = option;
+            label.appendChild(document.createTextNode(option));
+            
+            // Append to container
+            selectorContainer.appendChild(radioButton);
+            selectorContainer.appendChild(label);
+            
+         });
+		
+		document.getElementById("inputButtonArea").appendChild(selectorContainer);
+		// Choose single spacing by default
+		document.getElementById("singleSelected").checked = true;
 		
 	  	// Creates a section for each 1st order element in the config array
 	  	for (let i=0; i<configInfo.length; i++) {
 	  	
+	  		// Creates a div to contain the 'section'
 	  		const sectn = document.createElement("div");
-	  		sectn.innerHTML = configInfo[i][0]; // 1st order element 1 is section name
-	  		sectn.classList.add("sectionTitle");
-	  		sectn.style.margin = '5px';
-	  		document.getElementById("inputButtonArea").appendChild(sectn);
-	  	
+	  		
+	  		// Creates the section title
+	  		const sectnTitle = document.createElement("div");
+	  		sectnTitle.innerHTML = configInfo[i][0]; // 1st order element 1 is section name
+	  		sectnTitle.classList.add("sectionTitle");
+	  		sectnTitle.style.margin = "5px";
+	  		sectnTitle.style.display = "inline-block";
+	  		
+	  		// Add the section title to the section
+	  		sectn.appendChild(sectnTitle);
+	  		
 	  		// Creates a button for each 2nd order element in the config array
 	  		for (let j=1; j<configInfo[i].length; j++) {
 	  		
+	  			// Creates a div to contain both the button and its tooltip
 	  			const btnContainer = document.createElement("div");
 	  			btnContainer.classList.add("tooltip");
 	  			
+	  			// Creates a span for the tooltip (not visible to start)
 	  			const btnTooltip = document.createElement("span");
-	  			btnTooltip.classList.add("tooltipText");
+	  			btnTooltip.classList.add("tooltiptext");
+	  			btnTooltip.style.backgroundColor = brandColor;
+				btnTooltip.style.color = brandContrastColor;
 	  			btnTooltip.innerHTML = configInfo[i][j][1];
-	  			btnTooltip.style.visibility = "hidden";
-	  			btnTooltip.style.position = "absolute";
 	  			
-	  			// TODO: fix tooltips not appearing correctly
-	  			
+	  			//Creates the button itself
 	    		const btn = document.createElement("button");
 				btn.innerHTML = configInfo[i][j][0]; // 3rd order element 1 is button text
 				btn.classList.add("inputButton");
 				btn.onclick = function() {
    					addText(configInfo[i][j][1]); //3rd order element 2 is text to copy
 				};
+				// Styles the button in line with the proscribed colours
 				btn.style.backgroundColor = brandColor;
-				btn.style.color = brandTextColor;
+				btn.style.color = brandContrastColor;
 				btn.style.border = "none";
 				btn.style.padding = "5px";
 				btn.style.borderRadius = "4px";
 				btn.style.margin = "5px";
  			    btn.style.display = "inline-block";
 				
+				// Add the button and its tooltip to the container area
 				btnContainer.appendChild(btn);
 				btnContainer.appendChild(btnTooltip);
 				
-				document.getElementById("inputButtonArea").appendChild(btnContainer);
+				// Add the button container to the section
+				sectn.appendChild(btnContainer);
+				
+				// Add the section to the button area
+				document.getElementById("inputButtonArea").appendChild(sectn);
 				
 			}
 		
@@ -217,6 +259,15 @@
 	  
 	    // Get existing text field
 	    var existingText = document.getElementById("outputBox").value;
+	    
+	    // Check the choice of spacing
+	    if (document.getElementById("doubleSelected").checked) {
+	    	snippet += "\n\n"; // Adds two line breaks
+	    } else if (document.getElementById("singleSelected").checked) {
+	    	snippet += "\n"; // Adds one line break
+	    } else {
+	    	console.log("Error selecting spacing"); // Fall-back
+	    }
 	    
 	    // Append the snippet and output back to the text field
 	    document.getElementById("outputBox").value = existingText + snippet;
@@ -266,7 +317,7 @@
   </head>
 
   <body>
-    <h1>Copy-Paste-O-Matic (v0.2)</h2>
+    <h1>Copy-Paste-O-Matic (v0.3)</h2>
    
     <div class="inputArea">
     
@@ -280,21 +331,13 @@
         </select>
       </div>-->
       
-      <div id="inputButtonArea">
-      <!-- Button for testing tooltip
-      <div class="tooltip"><input type=button class="inputButton" value="Tooltip test" 
-				onClick="addText('- This tooltip works.\n')"/>
-				<span class="tooltiptext">This tooltip works.</span></div>
-				
-	  -->
-      
-      </div>
+      <div id="inputButtonArea"></div>
           
     </div>
     
     <div class="outputArea">
     
-      <textarea rows="20" name="outputBox" id="outputBox"></textarea>
+      <textarea rows="30" name="outputBox" id="outputBox"></textarea>
       
       <div class="outputButtonArea">
         <input type=button class="button" value="COPY TEXT" 
