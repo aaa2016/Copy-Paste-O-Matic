@@ -13,7 +13,7 @@ The text is appended to the text area on the right.
 
 Click 'COPY TEXT' to copy the contents of the text area to your clipboard, for pasting elsewhere.
 
-The sections, buttons, and text to be inserted from each button are found in the config.js file - this file must be saved in the same directory as the .html file of this tool. (An 'All-In-One' version is alsa available, which includes the config info in the .html file itself.)
+The sections, buttons, and text to be inserted from each button are found in the config.js file - this file must be saved in the same directory as the .html file of this tool. (An 'All-In-One' version is also available, which includes the config info in the .html file itself.)
 
 Each snippet of text can be copied as many times as needed.
 
