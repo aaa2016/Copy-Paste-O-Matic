@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <title id="pageTitle">Copy-Paste-O-Matic</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Tool for quicker copy-pasting of text snippets">
+    <meta name="keywords" content="">
+    <meta name="author" content="Artur A.">
+    
+    <style>
+		body {font-family: sans-serif}
+		h1, h2, h3, noscript, form {text-align: center}
+		.button, .inputButton {
+ 			 background-color: #555555;
+ 			 border: none;
+ 			 color: white;
+ 			 padding: 5px 10px;
+ 			 text-align: center;
+ 			 text-decoration: none;
+ 			 display: inline-block;
+ 			 border-radius: 4px;
+ 		}
+ 		.button:hover {
+ 			 background-color: #999999;
+ 		}
+ 		textarea {
+			width: 90%;
+			border: 2px solid black;
+			border-radius: 4px;
+		}
+		
+		div.inputArea {
+		    width:60%;  
+            float:left;
+		}
+		
+		/* Dropdown menu */
+		div.selector {
+			padding: 5px 10px;
+		}
+		
+		div.selectorContainer {
+			display: inline-block;
+		}
+		
+		/* End dropdown menu */
+		
+		div.section {
+			width: 90%;
+			/*border: 1px solid black;*/
+			padding: 5px 10px;
+		}
+		
+		div.sectionTitle {
+			font-weight: bold;
+		}
+		
+		div.outputArea {
+		    width: 40%;  
+            /*float:left;*/
+            position: fixed; /* Makes box stay in place as user scrolls down */
+            right: 0; /* Keeps box aligned at the right of the page */
+		}
+		
+		div.outputButtonArea {
+			text-align: center;
+			padding: 5px 10px;
+		}
+		
+		div.messages {
+			width: 90%;
+			color: red;
+			text-align: center;
+ 			text-decoration: none;
+ 			display: inline-block;
+ 			opacity: 1;
+		}
+		
+		.fade-out {
+  			opacity: 0;
+  			transition: opacity 3s ease;
+		}
+
+		/* Tooltips */
+		.tooltip {
+		  position: relative;
+		  display: inline-block;
+		  /*border-bottom: 1px dotted black;*/
+		}
+
+		.tooltip .tooltiptext {
+		  visibility: hidden;
+		  width: 120px; /* TODO: dynamic tooltip width */
+		  background-color: #555;
+		  color: #fff;
+		  /* text-align: center; */
+		  border-radius: 6px;
+		  padding: 5px;
+		  position:  absolute;
+		  z-index: 1;
+		  top: 100%;
+		  left: 50%;
+		  /*
+		  bottom: -100%;
+		  left: 100%;
+		  margin-left: -50px;*/
+		  opacity: 0;
+		  transition: opacity 0.3s;
+		}
+
+		.tooltip .tooltiptext::after {
+		  content: "";
+		  position: absolute;
+		  top: 100%;
+		  left: 50%;
+		  /* the bits below add a little triangle */
+		  /*margin-left: -5px;
+		  border-width: 5px;
+		  border-style: solid;
+		  border-color: #555 transparent transparent transparent;*/
+		}
+
+		.tooltip:hover .tooltiptext {
+		  visibility: visible;
+		  opacity: 1;
+		}
+		
+		/* End tooltips */
+		
+	</style>
+
+	<script>
+
+		var brandColor = "#555555"; // Default is otherwise: #555555
+		var brandContrastColor = "white"; // Default is otherwise: white
+
+		var configInfo = [
+
+	/*
+		Notes to end user:
+		1) Some text requires an escape character:
+			eg. # should be written as \#
+		2) Last button in each section doesn't have comma after square bracket
+		3) Last section doesn't have comma after square bracket
+		4) To insert a line break (new line), use \n
+	*/
+
+	// Section 1
+	[
+		["Section 1"],
+		["Text Aa","- This is text Aa."],
+		["Text Bb","- This is text Bb."],
+		["Text Cc","- This is text Cc."]
+	],
+	
+	// Section 2
+	[
+		["Section 2"],
+		["Text Dd","- This is text Dd."],
+		["Text Ee","- This is text Ee."],
+		["Text Ff","- This is text Ff. This is also text Ff. This is text also Ff." + 
+		"This is text Ff. This is text Ff. This is text Ff. This is text Ff. This is" + 
+		"text Ff. This is text Ff."]
+		],
+	
+	// Section 3
+	[
+		["Section 3"],
+		["Text Aa","- This is text Aa."],
+		["Text Bb","- This is text Bb."],
+		["Text Cc","- This is text Cc."],
+		["Text Aaa","- This is text Aaa."],
+		["Text Bbb","- This is text Bbb."],
+		["Text Ccc","- This is text Ccc."]
+	],
+	
+	// Section 4
+	[
+		["Section 4"],
+		["Text Dd","- This is text Dd."],
+		["Text Ee","- This is text Ee."],
+		["Text Ff","- This is text Ff."],
+		["Text Ddd","- This is text Ddd."],
+		["Text Eee","- This is text Eee."],
+		["Text Fff","- This is text Fff."]
+		],
+	
+	// Section 5
+	[
+		["Section 5"],
+		["Text Xx","- This is text Xx."],
+		["Text Yy","- This is text Yy."],
+		["Text Zz","- This is text Zz."]
+	]
+	
+	/* To create a new section, copy and paste this up to the asterisk and slash:
+	
+	[
+		["Section Title"],
+		["Button text Xx","- This is the text snippet Xx."],
+		["Button text Yy","- This is the text snippet Yy."],
+		["Button text Zz","- This is the text snippet Zz."]
+	]
+	
+	*/
+
+		]; // End of configInfo array
+
+		console.log("Config has been loaded.");
+		 
+	  function generateInputForm() {
+	  
+	  	// configInfo will be an array stored in external config.js file
+		
+		console.log("Config is: " + configInfo);
+		console.log("Brand colour is: " + brandColor);
+		console.log("Brand contrast colour is: " + brandContrastColor);
+		
+		// Create line spacing radio selector
+		document.getElementById("inputButtonArea").innerHTML = "Default line spacing: ";
+		
+		// Create choices for spacing selector - used later in function addText(snippet)
+		var options = ['single', 'double'];
+		
+        const selectorContainer = document.createElement("span");
+         
+        options.forEach(function(option, index) {
+            // Create radio input
+            var radioButton = document.createElement('input');
+            radioButton.type = 'radio';
+            radioButton.name = 'spacingSelection';
+            radioButton.value = option;
+            radioButton.id = option + "Selected";
+            
+            // Create label
+            var label = document.createElement('label');
+            label.htmlFor = option;
+            label.appendChild(document.createTextNode(option));
+            
+            // Append to container
+            selectorContainer.appendChild(radioButton);
+            selectorContainer.appendChild(label);
+            
+         });
+		
+		document.getElementById("inputButtonArea").appendChild(selectorContainer);
+		// Choose single spacing by default
+		document.getElementById("singleSelected").checked = true;
+		
+	  	// Creates a section for each 1st order element in the config array
+	  	for (let i=0; i<configInfo.length; i++) {
+	  	
+	  		// Creates a div to contain the 'section'
+	  		const sectn = document.createElement("div");
+	  		
+	  		// Creates the section title
+	  		const sectnTitle = document.createElement("div");
+	  		sectnTitle.innerHTML = configInfo[i][0]; // 1st order element 1 is section name
+	  		sectnTitle.classList.add("sectionTitle");
+	  		sectnTitle.style.margin = "5px";
+	  		sectnTitle.style.display = "inline-block";
+	  		
+	  		// Add the section title to the section
+	  		sectn.appendChild(sectnTitle);
+	  		
+	  		// Creates a button for each 2nd order element in the config array
+	  		for (let j=1; j<configInfo[i].length; j++) {
+	  		
+	  			// Creates a div to contain both the button and its tooltip
+	  			const btnContainer = document.createElement("div");
+	  			btnContainer.classList.add("tooltip");
+	  			
+	  			// Creates a span for the tooltip (not visible to start)
+	  			const btnTooltip = document.createElement("span");
+	  			btnTooltip.classList.add("tooltiptext");
+	  			btnTooltip.style.backgroundColor = brandColor;
+				btnTooltip.style.color = brandContrastColor;
+	  			btnTooltip.innerHTML = configInfo[i][j][1];
+	  			
+	  			//Creates the button itself
+	    		const btn = document.createElement("button");
+				btn.innerHTML = configInfo[i][j][0]; // 3rd order element 1 is button text
+				btn.classList.add("inputButton");
+				btn.onclick = function() {
+   					addText(configInfo[i][j][1]); //3rd order element 2 is text to copy
+				};
+				// Styles the button in line with the proscribed colours
+				btn.style.backgroundColor = brandColor;
+				btn.style.color = brandContrastColor;
+				btn.style.border = "none";
+				btn.style.padding = "5px";
+				btn.style.borderRadius = "4px";
+				btn.style.margin = "5px";
+ 			    btn.style.display = "inline-block";
+				
+				// Add the button and its tooltip to the container area
+				btnContainer.appendChild(btn);
+				btnContainer.appendChild(btnTooltip);
+				
+				// Add the button container to the section
+				sectn.appendChild(btnContainer);
+				
+				// Add the section to the button area
+				document.getElementById("inputButtonArea").appendChild(sectn);
+				
+			}
+		
+		}
+	  	    
+	    //TODO: generates different content based on drop-down workflow selector
+	  
+	  }
+	  
+	  function addText(snippet) {
+	  
+	    // Get existing text field
+	    var existingText = document.getElementById("outputBox").value;
+	    
+	    // Check the choice of spacing
+	    if (document.getElementById("doubleSelected").checked) {
+	    	snippet += "\n\n"; // Adds two line breaks
+	    } else if (document.getElementById("singleSelected").checked) {
+	    	snippet += "\n"; // Adds one line break
+	    } else {
+	    	console.log("Error selecting spacing"); // Fall-back
+	    }
+	    
+	    // Append the snippet and output back to the text field
+	    document.getElementById("outputBox").value = existingText + snippet;
+	  
+	  }
+	
+	  function copyText() {
+        // Get the text field
+        var copyText = document.getElementById("outputBox");
+
+        // Select the text field
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.value);
+
+        // Alert the copied text
+        //alert("Copied the text: " + copyText.value);
+        
+        // Display confirmation message below button, that fades
+        // Delete existing messages first
+        const list = document.getElementById("messageArea");
+		while (list.hasChildNodes()) {
+		  list.removeChild(list.firstChild);
+		}
+		// Now create new message
+        const successMessage = document.createElement("div");
+	  	successMessage.innerHTML = "Text copied!";
+	  	successMessage.style.color = brandColor;
+        document.getElementById("messageArea").appendChild(successMessage);
+        setTimeout(() => {
+  			successMessage.classList.add("fade-out");
+		}, 10);
+        
+	  } 
+	
+	  function clearText() {
+	    document.getElementById("outputBox").value = "";
+	    document.getElementById("messageArea").innerHTML = "";
+	    
+	    //TODO: add confirmation before clearing text to prevent accidental deletion
+	  }
+	
+	</script>
+
+  </head>
+
+  <body onload="generateInputForm()">
+    <h1>Copy-Paste-O-Matic (v0.4b - All-In-One)</h2>
+   
+    <div class="inputArea">
+    
+       <!-- TODO: add workflow selector
+       <div class="selector">
+        <select id="workflow" name="workflow">
+          <option value="workflow1">Workflow 1</option>
+          <option value="workflow2">Workflow 2</option>
+          <option value="workflow3">Workflow 3</option>
+          <option value="workflow4">Workflow 4</option>
+        </select>
+      </div>-->
+      
+      <div id="inputButtonArea"></div>
+          
+    </div>
+    
+    <div class="outputArea">
+    
+      <textarea rows="30" name="outputBox" id="outputBox"></textarea>
+      
+      <div class="outputButtonArea">
+        <input type=button class="button" value="COPY TEXT" 
+				onClick="copyText()"/>
+	    <input type=button class="button" value="Clear text box" 
+				onClick="clearText()"/>
+	  </div>
+	  <div class="messages" id="messageArea">
+	  	<!--Messages output here-->
+	  </div>
+	</div>
+
+  </body>
+</html>

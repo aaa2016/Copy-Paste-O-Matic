@@ -13,7 +13,7 @@ The text is appended to the text area on the right.
 
 Click 'COPY TEXT' to copy the contents of the text area to your clipboard, for pasting elsewhere.
 
-The sections, buttons, and text to be inserted from each button are found in the config.js file - this file must be saved in the same directory as the .html file of this tool.
+The sections, buttons, and text to be inserted from each button are found in the config.js file - this file must be saved in the same directory as the .html file of this tool. (An 'All-In-One' version is alsa available, which includes the config info in the .html file itself.)
 
 Each snippet of text can be copied as many times as needed.
 
@@ -23,7 +23,6 @@ The user can select the option of a single or double carriage return (new line) 
 
 ## Features yet to be implemented<a name="features"></a>
 
-* Tooltips that display the text to be copied when a button is hovered over
 * Supporting multiple workflows, each with their own sections and buttons (will have dropdown selector)
 
 ## Screenshot<a name="screenshot"></a>
