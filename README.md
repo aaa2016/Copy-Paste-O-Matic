@@ -21,6 +21,8 @@ Any text that is manually inserted or edited in the text area will also be copie
 
 The user can select the option of a single or double carriage return (new line) between copied snippets of text.
 
+The 'Clear text box' removes any text in the text area. There is an 'Undo' option to restore the most recently cleared text.
+
 ## Features yet to be implemented<a name="features"></a>
 
 * Supporting multiple workflows, each with their own sections and buttons (will have dropdown selector)

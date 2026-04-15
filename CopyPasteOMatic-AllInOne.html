@@ -1,4 +1,24 @@
 <!DOCTYPE html>
+
+<!--
+
+Copyright (C) 2026  Artur A.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+-->
+
 <html lang="en-GB">
   <head>
     <title id="pageTitle">Copy-Paste-O-Matic</title>
@@ -23,10 +43,16 @@
  		.button:hover {
  			 background-color: #999999;
  		}
+ 		
  		textarea {
 			width: 90%;
 			border: 2px solid black;
 			border-radius: 4px;
+		}
+		
+		a {
+			text-decoration: none;
+			color: #555555;
 		}
 		
 		div.inputArea {
@@ -90,7 +116,7 @@
 
 		.tooltip .tooltiptext {
 		  visibility: hidden;
-		  width: 120px; /* TODO: dynamic tooltip width */
+		  width: 200px; /* TODO: dynamic tooltip width */
 		  background-color: #555;
 		  color: #fff;
 		  /* text-align: center; */
@@ -130,11 +156,13 @@
 	</style>
 
 	<script>
+	
+	// ######
+	var brandColor = "#555555"; // Default is otherwise: #555555
+	var brandColorLight = "#888888"; // Default is otherwise: #888888
+	var brandContrastColor = "white"; // Default is otherwise: white
 
-		var brandColor = "#555555"; // Default is otherwise: #555555
-		var brandContrastColor = "white"; // Default is otherwise: white
-
-		var configInfo = [
+	var configInfo = [
 
 	/*
 		Notes to end user:
@@ -204,9 +232,9 @@
 	
 	*/
 
-		]; // End of configInfo array
+]; // End of configInfo array
 
-		console.log("Config has been loaded.");
+	   console.log("Config has been loaded.");
 		 
 	  function generateInputForm() {
 	  
@@ -273,7 +301,7 @@
 	  			// Creates a span for the tooltip (not visible to start)
 	  			const btnTooltip = document.createElement("span");
 	  			btnTooltip.classList.add("tooltiptext");
-	  			btnTooltip.style.backgroundColor = brandColor;
+	  			btnTooltip.style.backgroundColor = brandColorLight; // Tooltip is lighter
 				btnTooltip.style.color = brandContrastColor;
 	  			btnTooltip.innerHTML = configInfo[i][j][1];
 	  			
@@ -358,22 +386,45 @@
         setTimeout(() => {
   			successMessage.classList.add("fade-out");
 		}, 10);
+		
+		document.getElementById("undoPromptArea").innerHTML = "";
         
 	  } 
 	
+	  // Create container for text to be saved for 'undo clear' function
+	  var lastText = "";
+	
 	  function clearText() {
+	  
+	  	// Save a copy of the current text in the output area
+	  	lastText = document.getElementById("outputBox").value;
+	  
+	  	// Create 'Undo?' link
+	  	const undoLink = document.createElement("a");
+	  	undoLink.innerHTML = "Undo?";
+	  	undoLink.href = "javascript:undoClear()";
+	  	//undoLink.onClick = "undoClear()"; // Calls the function to restore text
+	  	document.getElementById("undoPromptArea").appendChild(undoLink);
+	  
+	  	// Clear text area and remove any messages
 	    document.getElementById("outputBox").value = "";
 	    document.getElementById("messageArea").innerHTML = "";
 	    
-	    //TODO: add confirmation before clearing text to prevent accidental deletion
 	  }
-	
+	  
+	  function undoClear() {
+	  	
+	  	document.getElementById("outputBox").value = lastText;
+	  	document.getElementById("undoPromptArea").innerHTML = "";
+	  
+	  }
+	  	
 	</script>
 
   </head>
 
   <body onload="generateInputForm()">
-    <h1>Copy-Paste-O-Matic (v0.4b - All-In-One)</h2>
+    <h1>Copy-Paste-O-Matic (v1.0b - All-in-One)</h2>
    
     <div class="inputArea">
     
@@ -400,6 +451,7 @@
 				onClick="copyText()"/>
 	    <input type=button class="button" value="Clear text box" 
 				onClick="clearText()"/>
+		<span id="undoPromptArea"></span>
 	  </div>
 	  <div class="messages" id="messageArea">
 	  	<!--Messages output here-->

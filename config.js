@@ -1,4 +1,5 @@
 var brandColor = "#555555"; // Default is otherwise: #555555
+var brandColorLight = "#888888"; // Default is otherwise: #888888
 var brandContrastColor = "white"; // Default is otherwise: white
 
 var configInfo = [
@@ -59,6 +60,17 @@ var configInfo = [
 		["Text Yy","- This is text Yy."],
 		["Text Zz","- This is text Zz."]
 	]
+	
+	/* To create a new section, copy and paste this up to the asterisk and slash:
+	
+	[
+		["Section Title"],
+		["Button text Xx","- This is the text snippet Xx."],
+		["Button text Yy","- This is the text snippet Yy."],
+		["Button text Zz","- This is the text snippet Zz."]
+	]
+	
+	*/
 
 ]; // End of configInfo array
 
