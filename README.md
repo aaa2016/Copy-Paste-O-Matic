@@ -23,6 +23,8 @@ The user can select the option of a single or double carriage return (new line) 
 
 The 'Clear text box' removes any text in the text area. There is an 'Undo' option to restore the most recently cleared text.
 
+Custom button colors can be set in the config.js file, with the option for a custom colour for per section.
+
 ## Features yet to be implemented<a name="features"></a>
 
 * Supporting multiple workflows, each with their own sections and buttons (will have dropdown selector)

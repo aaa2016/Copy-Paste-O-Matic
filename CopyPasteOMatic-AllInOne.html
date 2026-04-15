@@ -79,6 +79,7 @@ Copyright (C) 2026  Artur A.
 		
 		div.sectionTitle {
 			font-weight: bold;
+			padding: 10px 0px;
 		}
 		
 		div.outputArea {
@@ -157,7 +158,6 @@ Copyright (C) 2026  Artur A.
 
 	<script>
 	
-	// ######
 	var brandColor = "#555555"; // Default is otherwise: #555555
 	var brandColorLight = "#888888"; // Default is otherwise: #888888
 	var brandContrastColor = "white"; // Default is otherwise: white
@@ -171,11 +171,15 @@ Copyright (C) 2026  Artur A.
 		2) Last button in each section doesn't have comma after square bracket
 		3) Last section doesn't have comma after square bracket
 		4) To insert a line break (new line), use \n
+		5) Don't mix the same quotation marks - use ' inside the text
+			or use escape character \' or \"
+		6) You can set a custom colour for the buttons in a particular section
+			in the element after the section title
 	*/
 
 	// Section 1
 	[
-		["Section 1"],
+		["Section 1",""],
 		["Text Aa","- This is text Aa."],
 		["Text Bb","- This is text Bb."],
 		["Text Cc","- This is text Cc."]
@@ -183,7 +187,7 @@ Copyright (C) 2026  Artur A.
 	
 	// Section 2
 	[
-		["Section 2"],
+		["Section 2",""],
 		["Text Dd","- This is text Dd."],
 		["Text Ee","- This is text Ee."],
 		["Text Ff","- This is text Ff. This is also text Ff. This is text also Ff." + 
@@ -193,7 +197,7 @@ Copyright (C) 2026  Artur A.
 	
 	// Section 3
 	[
-		["Section 3"],
+		["Section 3","#000099"],
 		["Text Aa","- This is text Aa."],
 		["Text Bb","- This is text Bb."],
 		["Text Cc","- This is text Cc."],
@@ -204,7 +208,7 @@ Copyright (C) 2026  Artur A.
 	
 	// Section 4
 	[
-		["Section 4"],
+		["Section 4","#009900"],
 		["Text Dd","- This is text Dd."],
 		["Text Ee","- This is text Ee."],
 		["Text Ff","- This is text Ff."],
@@ -215,7 +219,7 @@ Copyright (C) 2026  Artur A.
 	
 	// Section 5
 	[
-		["Section 5"],
+		["Section 5","#990000"],
 		["Text Xx","- This is text Xx."],
 		["Text Yy","- This is text Yy."],
 		["Text Zz","- This is text Zz."]
@@ -224,7 +228,7 @@ Copyright (C) 2026  Artur A.
 	/* To create a new section, copy and paste this up to the asterisk and slash:
 	
 	[
-		["Section Title"],
+		["Section Title","Section custom button colour (optional)"],
 		["Button text Xx","- This is the text snippet Xx."],
 		["Button text Yy","- This is the text snippet Yy."],
 		["Button text Zz","- This is the text snippet Zz."]
@@ -234,7 +238,7 @@ Copyright (C) 2026  Artur A.
 
 ]; // End of configInfo array
 
-	   console.log("Config has been loaded.");
+	  console.log("Confighas been loaded.");
 		 
 	  function generateInputForm() {
 	  
@@ -242,6 +246,7 @@ Copyright (C) 2026  Artur A.
 		
 		console.log("Config is: " + configInfo);
 		console.log("Brand colour is: " + brandColor);
+		console.log("Brand lighter colour is: " + brandColorLight);
 		console.log("Brand contrast colour is: " + brandContrastColor);
 		
 		// Create line spacing radio selector
@@ -280,10 +285,11 @@ Copyright (C) 2026  Artur A.
 	  	
 	  		// Creates a div to contain the 'section'
 	  		const sectn = document.createElement("div");
+	  		sectn.style.borderBottom = "1px solid #555555"; //Border after each section
 	  		
 	  		// Creates the section title
 	  		const sectnTitle = document.createElement("div");
-	  		sectnTitle.innerHTML = configInfo[i][0]; // 1st order element 1 is section name
+	  		sectnTitle.innerHTML = configInfo[i][0][0]; // Element is section name
 	  		sectnTitle.classList.add("sectionTitle");
 	  		sectnTitle.style.margin = "5px";
 	  		sectnTitle.style.display = "inline-block";
@@ -312,8 +318,17 @@ Copyright (C) 2026  Artur A.
 				btn.onclick = function() {
    					addText(configInfo[i][j][1]); //3rd order element 2 is text to copy
 				};
+				
 				// Styles the button in line with the proscribed colours
-				btn.style.backgroundColor = brandColor;
+				// Check if section has custom colour
+				if (configInfo[i][0][1] != "") {
+					// Use custom section colour
+					btn.style.backgroundColor = configInfo[i][0][1];
+				} else {
+					// Use brand colour
+					btn.style.backgroundColor = brandColor;
+				}
+				
 				btn.style.color = brandContrastColor;
 				btn.style.border = "none";
 				btn.style.padding = "5px";
@@ -398,6 +413,9 @@ Copyright (C) 2026  Artur A.
 	  
 	  	// Save a copy of the current text in the output area
 	  	lastText = document.getElementById("outputBox").value;
+	  	
+	  	// Clear any previous Undo messages
+	  	document.getElementById("undoPromptArea").innerHTML = "";
 	  
 	  	// Create 'Undo?' link
 	  	const undoLink = document.createElement("a");
@@ -424,7 +442,7 @@ Copyright (C) 2026  Artur A.
   </head>
 
   <body onload="generateInputForm()">
-    <h1>Copy-Paste-O-Matic (v1.0b - All-in-One)</h2>
+    <h1>Copy-Paste-O-Matic (v1.1b) - All-in-One</h1>
    
     <div class="inputArea">
     

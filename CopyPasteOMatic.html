@@ -79,6 +79,7 @@ Copyright (C) 2026  Artur A.
 		
 		div.sectionTitle {
 			font-weight: bold;
+			padding: 10px 0px;
 		}
 		
 		div.outputArea {
@@ -192,6 +193,7 @@ Copyright (C) 2026  Artur A.
 		
 		console.log("Config is: " + configInfo);
 		console.log("Brand colour is: " + brandColor);
+		console.log("Brand lighter colour is: " + brandColorLight);
 		console.log("Brand contrast colour is: " + brandContrastColor);
 		
 		// Create line spacing radio selector
@@ -230,10 +232,11 @@ Copyright (C) 2026  Artur A.
 	  	
 	  		// Creates a div to contain the 'section'
 	  		const sectn = document.createElement("div");
+	  		sectn.style.borderBottom = "1px solid #555555"; //Border after each section
 	  		
 	  		// Creates the section title
 	  		const sectnTitle = document.createElement("div");
-	  		sectnTitle.innerHTML = configInfo[i][0]; // 1st order element 1 is section name
+	  		sectnTitle.innerHTML = configInfo[i][0][0]; // Element is section name
 	  		sectnTitle.classList.add("sectionTitle");
 	  		sectnTitle.style.margin = "5px";
 	  		sectnTitle.style.display = "inline-block";
@@ -262,8 +265,17 @@ Copyright (C) 2026  Artur A.
 				btn.onclick = function() {
    					addText(configInfo[i][j][1]); //3rd order element 2 is text to copy
 				};
+				
 				// Styles the button in line with the proscribed colours
-				btn.style.backgroundColor = brandColor;
+				// Check if section has custom colour
+				if (configInfo[i][0][1] != "") {
+					// Use custom section colour
+					btn.style.backgroundColor = configInfo[i][0][1];
+				} else {
+					// Use brand colour
+					btn.style.backgroundColor = brandColor;
+				}
+				
 				btn.style.color = brandContrastColor;
 				btn.style.border = "none";
 				btn.style.padding = "5px";
@@ -348,6 +360,9 @@ Copyright (C) 2026  Artur A.
 	  
 	  	// Save a copy of the current text in the output area
 	  	lastText = document.getElementById("outputBox").value;
+	  	
+	  	// Clear any previous Undo messages
+	  	document.getElementById("undoPromptArea").innerHTML = "";
 	  
 	  	// Create 'Undo?' link
 	  	const undoLink = document.createElement("a");
@@ -374,7 +389,9 @@ Copyright (C) 2026  Artur A.
   </head>
 
   <body>
-    <h1>Copy-Paste-O-Matic (v1.0)</h2>
+  <!--Use tag below in All-in-One version-->
+  <!--<body onload="generateInputForm()">-->
+    <h1>Copy-Paste-O-Matic (v1.1)</h1>
    
     <div class="inputArea">
     
